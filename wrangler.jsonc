@@ -1,0 +1,58 @@
+{
+  "name": "uptime-monitor",
+  "main": "src/index.js",
+  "compatibility_date": "2025-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "define": {
+    "__dirname": "\"/\"",
+    "__filename": "\"/index.js\""
+  },
+  // ← 占位符：替换为你的 Cloudflare 账户 ID（dashboard 右侧栏或 `npx wrangler whoami`）
+  "account_id": "<YOUR_ACCOUNT_ID>",
+  "triggers": {
+    "crons": ["*/5 * * * *"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "uptime-db",
+      // ← 占位符：`npx wrangler d1 create uptime-db` 后输出的 database_id
+      "database_id": "<YOUR_D1_DATABASE_ID>"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "KV",
+      // ← 占位符：`npx wrangler kv namespace create KV` 后输出的 id
+      "id": "<YOUR_KV_NAMESPACE_ID>"
+    }
+  ],
+  // 可选：邮件告警备用通道。若你的账户未配置 Email Routing，删除整个 send_email 块即可
+  //（主告警通道走 SMTP secrets，不受影响）
+  "send_email": [
+    { "name": "SEND_EMAIL" }
+  ],
+  "vars": {
+    // ← 告警收件邮箱
+    "ALERT_TO": "<YOUR_ALERT_EMAIL@example.com>",
+    // ← 发件标识（SMTP 主通道的 From 由 SMTP_USER 决定，此项仅备用通道使用）
+    "ALERT_FROM": "<YOUR_FROM_EMAIL@example.com>",
+    // ← 自己生成一个随机 key：powershell -Command "-join ((48..57)+(97..122) | Get-Random -Count 48 | % {[char]$_})"
+    "API_KEY": "<YOUR_RANDOM_API_KEY>",
+    // ← 可选：VPS 侧 x-ui 重启服务地址；没有 VPS 就保持 example.com（功能不触发）
+    "SSH_HOST": "example.com",
+    "SSH_PORT": "39332",
+    // ← 可选：Cloudflare Zero Trust 管理员登录（update-deploy.md §3.5）。
+    //   三个值全部替换为空串 "" 即关闭该功能（登录页不显示按钮，纯密码登录）。
+    //   ACCESS_EMAILS: 白名单邮箱，多个用英文逗号分隔，如 "you@example.com,other@example.com"
+    //   ACCESS_TEAM_DOMAIN: Zero Trust 团队域，如 "yourteam.cloudflareaccess.com"
+    //   ACCESS_AUD: Access 应用的 AUD tag（cf zero-trust access applications create 的输出 aud 字段）
+    "ACCESS_EMAILS": "<YOUR_ACCESS_EMAILS>",
+    "ACCESS_TEAM_DOMAIN": "<YOUR_ACCESS_TEAM_DOMAIN>",
+    "ACCESS_AUD": "<YOUR_ACCESS_AUD>"
+  },
+  "routes": [
+    // ← 占位符：你的自定义域（需已托管在同账户 Cloudflare，如 uptime.your-domain.com）
+    { "pattern": "<YOUR_UPTIME_DOMAIN>", "custom_domain": true }
+  ]
+}
